@@ -48,35 +48,41 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Tên thuốc</th>
-                                        <th>Thành phần của thuốc</th>
-                                        <th>Nhà sản suất của thuốc</th>
-                                        <th>Dạng thuốc</th>
-                                        <th>Giá của thuốc</th>
-                                        <th>Số lượng tồn kho của thuốc:</th>
-                                        <th>Mô tả về thuốc</th>
+                                        <th>Tên bệnh nhân</th>
+                                        <th>Ngày sinh bệnh nhân</th>
+                                        <th>Cân nặng bệnh nhân</th>
+                                        <th>giới tính</th>
+                                        <th>SĐT</th>
+                                        <th>Email</th>
                                         <th>Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for medication in medications %}
+                                    {% for patient in patients %}
                                     <tr>
-                                        <td>{{ medication.id }}</td>
-                                        <td>{{ medication.name }}</td>
-                                        <td>{{ medication.active_ingredient }}</td>
-                                        <td>{{ medication.manufacturer }}</td>
-                                        <td>{{ medication.dosage_form }}</td>
-                                        <td>{{ medication.unit_price }}</td>
-                                        <td>{{ medication.stock_quantity }}</td>
-                                        <td>{{ medication.description }}</td>
-                                        <td><a href="{% url 'medication_update' medication.pk %}"
-                                                class="btn btn-primary">Sửa</a>
-                                                <a href="{% url 'medication_delete' medication.pk %}" data-url="{% url 'medication_delete' medication.pk %}" class="btn btn-primary delete-link">Xóa</a>
-
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                                        <td>{{ patient.date_of_birth }}</td>
+                                        <td>{{ patient.patient_weight }} Kg</td>
+                                        <td>
+                                            {% if patient.gender == 'M' %}
+                                              Nam
+                                            {% elif patient.gender == 'N' %}
+                                              Nữ
+                                            {% else %}
+                                              Khác
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ patient.contact_number }}</td>
+                                        <td>{{ patient.email }}</td>
+                                        <td>
+                                            <a href="{% url 'patient_update' patient.pk %}" class="btn btn-primary">Sửa</a>
+                                            <a href="{% url 'patient_delete' patient.pk %}" data-url="{% url 'patient_delete' patient.pk %}" class="btn btn-primary delete-link-patient">Xóa</a>
                                         </td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
+                                
                             </table>
                         </div>
                         <!-- /.card-body -->
@@ -89,3 +95,43 @@
     </section>
     <!-- /.content -->
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteLinks = document.querySelectorAll('.delete-link-patient');
+        deleteLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const url = event.target.getAttribute('data-url');
+                const confirmDelete = confirm('Bạn có chắc chắn muốn xóa bệnh nhân này?');
+                if (confirmDelete) {
+                    // Sử dụng AJAX để gửi yêu cầu xóa
+                    fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                        .then(response => {
+                            if (response.status === 204) {
+                                alert('Đã xóa thành công.');
+                                window.location.reload(); // Tải lại trang sau khi xóa thành công
+                            } else {
+                                alert('Không thể xóa bệnh nhân này.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Lỗi:', error);
+                        });
+                }
+            });
+        });
+
+        // Hàm để lấy giá trị cookie CSRF
+        function getCookie(name) {
+            const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+            return cookieValue ? cookieValue.pop() : '';
+        }
+    });
+</script>

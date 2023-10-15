@@ -5,6 +5,7 @@ class Patient(models.Model):
     patient_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    patient_weight = models.CharField(max_length=255, default='null')
     date_of_birth = models.DateField()
     GENDER_CHOICES = (
         ('M', 'Male'),
@@ -23,6 +24,7 @@ class Medication(models.Model):
     active_ingredient = models.CharField(max_length=255)
     manufacturer = models.CharField(max_length=255)
     dosage_form = models.CharField(max_length=255)
+    prescribed_dose = models.CharField(max_length=255, default='null')
     unit_price = models.CharField(max_length=255)
     stock_quantity = models.CharField(max_length=255)
 
@@ -31,16 +33,20 @@ class Prescription(models.Model):
     prescription_id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.CharField(max_length=100)
-    prescription_date = models.CharField(max_length=100)
-    medications = models.ManyToManyField(Medication)
+    prescription_date = models.DateTimeField()
+
+class PrescriptionMedication(models.Model):
+    prescription = models.ForeignKey('Prescription', on_delete=models.CASCADE)
+    medication = models.ForeignKey('Medication', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=0)
 
 # Kiểm tra liều dùng
 class DoseChecking(models.Model):
     dose_check_id = models.AutoField(primary_key=True)
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
-    checked_date = models.CharField(max_length=255)
-    is_dosage_correct = models.BooleanField()  # Sử dụng BooleanField để lưu trạng thái True/False.
-    comments = models.CharField(max_length=255)
+    checked_date = models.DateTimeField(auto_now_add=True)
+    is_dosage_correct = models.BooleanField()
+    comments = models.TextField()
 
 # Lịch sử kê đơn
 class PrescriptionHistory(models.Model):
