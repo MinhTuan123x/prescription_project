@@ -49,11 +49,12 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Tên thuốc</th>
+                                        <th>Liều đề nghị của thuốc</th>
                                         <th>Thành phần của thuốc</th>
                                         <th>Nhà sản suất của thuốc</th>
                                         <th>Dạng thuốc</th>
                                         <th>Giá của thuốc</th>
-                                        <th>Số lượng tồn kho của thuốc:</th>
+                                        <th>Số lượng kho:</th>
                                         <th>Mô tả về thuốc</th>
                                         <th>Hành động</th>
                                     </tr>
@@ -63,6 +64,7 @@
                                     <tr>
                                         <td>{{ medication.id }}</td>
                                         <td>{{ medication.name }}</td>
+                                        <td>{{ medication.prescribed_dose }} Mg</td>
                                         <td>{{ medication.active_ingredient }}</td>
                                         <td>{{ medication.manufacturer }}</td>
                                         <td>{{ medication.dosage_form }}</td>
