@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Thông tin bệnh nhân
 class Patient(models.Model):
@@ -33,7 +34,7 @@ class Prescription(models.Model):
     prescription_id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.CharField(max_length=100)
-    prescription_date = models.DateTimeField()
+    prescription_date = models.DateTimeField(default=timezone.now)
 
 class PrescriptionMedication(models.Model):
     prescription = models.ForeignKey('Prescription', on_delete=models.CASCADE)
